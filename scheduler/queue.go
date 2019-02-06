@@ -13,13 +13,14 @@ func (q *QueueScheduler) Submit(r engine.Request) {
 	}()
 }
 
+func (q *QueueScheduler) WorkerChan() chan engine.Request {
+	return make(chan engine.Request)
+}
+
 func (q *QueueScheduler) WorkerReady(w chan engine.Request) {
 	q.workerChan <- w  // createWorker 产生的 用于 request -> worker 的 channel
 }
 
-func (q *QueueScheduler) QueueSchedulerWorkerChan(c chan engine.Request) {
-	panic("imple me")
-}
 func (q *QueueScheduler) Run() {
 	q.workerChan = make(chan chan engine.Request)
 	q.requestChan = make(chan engine.Request)

@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	e := engine.QueueEngine{
+	e := engine.ConcurrentEngine{
 		Scheduler: &scheduler.QueueScheduler{},
 		Workers:   100,
 	}

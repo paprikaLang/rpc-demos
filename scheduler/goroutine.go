@@ -12,9 +12,16 @@ func (s *GoroutineScheduler) Submit(r engine.Request) {
 	go func() {
 		s.workerChan <- r
 	}()
-
 }
 
-func (s *GoroutineScheduler) GoroutineSchedulerWorkerChan(c chan engine.Request) {
-	s.workerChan = c
+func (s *GoroutineScheduler) WorkerChan() chan engine.Request {
+	return s.workerChan
+}
+
+func (s *GoroutineScheduler) Run() {
+	s.workerChan = make(chan engine.Request)
+}
+
+func (s *GoroutineScheduler) WorkerReady(w chan engine.Request) {
+
 }
