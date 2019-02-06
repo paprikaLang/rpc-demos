@@ -14,7 +14,7 @@ var topicRe = regexp.MustCompile(`
 func ParseTopic(contents []byte) engine.ParseResult {
 	matches := topicRe.FindAllSubmatch(contents, -1)
 	result := engine.ParseResult{}
-	limit := 3
+
 	for _, m := range matches {
 		result.Items = append(result.Items, "Topic "+string(m[2]))
 		result.Items = append(result.Items, "Total "+string(m[3]))
@@ -22,10 +22,6 @@ func ParseTopic(contents []byte) engine.ParseResult {
 			Url:        "https://laravelcollections.com/" + string(m[1]),
 			ParserFunc: ParseItem,
 		})
-		limit--
-		if limit == 0 {
-			break
-		}
 	}
 	return result
 }

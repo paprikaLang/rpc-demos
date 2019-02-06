@@ -2,3 +2,7 @@
 ParseFunc: func(contents []byte) engine.ParseResult {
 				return ParseProfile(contents, string(m[2]))
 			}
+
+2. Scheduler将request全部通过channel传递给workers, 为避免相互等待, 会为每一个request传递的过程放到goroutine中进行
+
+3. 

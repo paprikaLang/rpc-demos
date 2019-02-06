@@ -20,15 +20,10 @@ func ParseItem(contents []byte) engine.ParseResult {
 	fmt.Println(len(matches))
 
 	result := engine.ParseResult{}
-	limit := 2
 	for _, m := range matches {
 		profile.Domain = string(m[3])
 		profile.Url = string(m[1])
 		profile.Title = string(m[2])
-		limit--
-		if limit == 0 {
-			break
-		}
 	}
 	result = engine.ParseResult{
 		Items: []interface{}{profile},
