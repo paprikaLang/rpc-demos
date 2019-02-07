@@ -11,7 +11,12 @@ import (
 )
 
 // ItemSaver save item to elasticsearch
-func ItemSaver() chan engine.Item {
+func ItemSaver(index string) (chan engine.Item, error) {
+	client, err := elastic.NewClient(
+		elastic.SetSniff(false))
+	if err != nil {
+		return nil, err
+	}
 	out := make(chan engine.Item)
 	go func() {
 		itemCount := 0
@@ -19,24 +24,20 @@ func ItemSaver() chan engine.Item {
 			item := <-out
 			log.Printf("Saved item #%d: %v ", itemCount, item)
 			itemCount++
-			err := save(item)
+			err := save(client, item, index)
 			if err != nil {
 				log.Printf("save %v got error: %v", item, err)
 			}
 		}
 	}()
-	return out
+	return out, nil
 }
-func save(item engine.Item) error {
-	client, err := elastic.NewClient(
-		elastic.SetSniff(false))
-	if err != nil {
-		return err
-	}
+func save(client *elastic.Client, item engine.Item, index string) error {
+
 	if item.Type == "" {
 		return errors.New("must supply elastic Type")
 	}
-	indexService := client.Index().Index("laravel_collections").Type(item.Type).BodyJson(item)
+	indexService := client.Index().Index(index).Type(item.Type).BodyJson(item)
 	if item.Id != "" {
 		indexService.Id(item.Id)
 	}

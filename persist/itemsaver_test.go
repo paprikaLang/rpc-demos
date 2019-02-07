@@ -21,17 +21,18 @@ func TestSave(t *testing.T) {
 			Title:  "Laravel v5.7.25 Released &nbsp;",
 		},
 	}
-
-	err := save(expected)
-	if err != nil {
-		panic(err)
-	}
 	client, err := elastic.NewClient(
 		elastic.SetSniff(false))
 	if err != nil {
 		panic(err)
 	}
-	res, err := client.Get().Index("laravel_collections").Type(expected.Type).Id(expected.Id).Do(context.Background())
+	index := "laravel_collections"
+	err = save(client, expected, index)
+	if err != nil {
+		panic(err)
+	}
+
+	res, err := client.Get().Index(index).Type(expected.Type).Id(expected.Id).Do(context.Background())
 	if err != nil {
 		panic(err)
 	}

@@ -8,10 +8,14 @@ import (
 )
 
 func main() {
+	itemsaver, err := persist.ItemSaver("laravel_collections")
+	if err != nil {
+		panic(err)
+	}
 	e := engine.ConcurrentEngine{
 		Scheduler: &scheduler.GoroutineScheduler{},
 		Workers:   10,
-		ItemSaver: persist.ItemSaver(),
+		ItemSaver: itemsaver,
 	}
 	// e := engine.SimpleEngine{}
 	e.Run(engine.Request{
