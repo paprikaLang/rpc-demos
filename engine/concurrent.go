@@ -1,10 +1,9 @@
 package engine
 
-import "log"
-
 type ConcurrentEngine struct {
 	Scheduler Scheduler
 	Workers   int
+	ItemSaver chan interface{}
 }
 
 type Scheduler interface {
@@ -29,12 +28,13 @@ func (q *ConcurrentEngine) Run(seeds ...Request) {
 	for _, r := range seeds {
 		q.Scheduler.Submit(r)
 	}
-	itemsCount := 0
+
 	for {
 		result := <-out
 		for _, item := range result.Items {
-			log.Printf("Got item #%d: %v ", itemsCount, item)
-			itemsCount++
+			go func(item interface{}) {
+				q.ItemSaver <- item // loop variable item captured by func literal
+			}(item)
 		}
 		for _, request := range result.Requests {
 			q.Scheduler.Submit(request)
@@ -52,7 +52,10 @@ func createWorker(in chan Request, out chan ParseResult, w WorkerChannelInQueue)
 			if err != nil {
 				continue
 			}
-			out <- result
+			for _, item := range result {
+				out <- item
+			}
+
 		}
 	}()
 }
