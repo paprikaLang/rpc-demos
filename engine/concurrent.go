@@ -3,7 +3,7 @@ package engine
 type ConcurrentEngine struct {
 	Scheduler Scheduler
 	Workers   int
-	ItemSaver chan interface{}
+	ItemSaver chan Item
 }
 
 type Scheduler interface {
@@ -32,7 +32,7 @@ func (q *ConcurrentEngine) Run(seeds ...Request) {
 	for {
 		result := <-out
 		for _, item := range result.Items {
-			go func(item interface{}) {
+			go func(item Item) {
 				q.ItemSaver <- item // loop variable item captured by func literal
 			}(item)
 		}

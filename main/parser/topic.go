@@ -20,8 +20,10 @@ func ParseTopic(contents []byte) []engine.ParseResult {
 		// result.Items = append(result.Items, "Topic "+string(m[2]))
 		// result.Items = append(result.Items, "Total "+string(m[3]))
 		result.Requests = append(result.Requests, engine.Request{
-			Path:       string(m[1]),
-			ParserFunc: ParseItem,
+			Path: string(m[1]),
+			ParserFunc: func(contents []byte) []engine.ParseResult {
+				return ParseItem(contents, string(m[2]))
+			},
 		})
 	}
 	return append(topicList, result)

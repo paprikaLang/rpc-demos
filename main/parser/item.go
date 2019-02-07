@@ -8,13 +8,13 @@ import (
 )
 
 var itemRe = regexp.MustCompile(
-	`<a href="(https://laravelcollections.com/go/[0-9]+)" rel="nofollow" target="_blank">
+	`<a href="https://laravelcollections.com/go/([0-9]+)" rel="nofollow" target="_blank">
 ([^<]*)<small>([^<]*)</small>
 </a>
 `)
 
 // ParseItem with parse
-func ParseItem(contents []byte) []engine.ParseResult {
+func ParseItem(contents []byte, topic string) []engine.ParseResult {
 
 	matches := itemRe.FindAllSubmatch(contents, -1)
 	fmt.Println(len(matches))
@@ -22,10 +22,17 @@ func ParseItem(contents []byte) []engine.ParseResult {
 	for _, m := range matches {
 		profile := model.Profile{}
 		profile.Domain = string(m[3])
-		profile.Url = string(m[1])
+		profile.Topic = topic
 		profile.Title = string(m[2])
 		result := engine.ParseResult{}
-		result.Items = []interface{}{profile}
+		result.Items = []engine.Item{
+			{
+				URL:     "https://laravelcollections.com/go/" + string(m[1]),
+				Id:      string(m[1]),
+				Type:    "collections",
+				Payload: profile,
+			},
+		}
 		profileList = append(profileList, result)
 	}
 	return profileList

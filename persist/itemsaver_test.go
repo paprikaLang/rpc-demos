@@ -3,6 +3,7 @@ package persist
 import (
 	"context"
 	"encoding/json"
+	"go-spider/engine"
 	"go-spider/model"
 	"testing"
 
@@ -10,12 +11,18 @@ import (
 )
 
 func TestSave(t *testing.T) {
-	expected := model.Profile{
-		Url:    "https://laravelcollections.com/go/532",
-		Domain: "github.com",
-		Title:  "Laravel v5.7.22 Released &nbsp;",
+	expected := engine.Item{
+		URL:  "https://laravelcollections.com/go/612",
+		Type: "collections",
+		Id:   "612",
+		Payload: model.Profile{
+			Topic:  "News",
+			Domain: "github.com",
+			Title:  "Laravel v5.7.25 Released &nbsp;",
+		},
 	}
-	id, err := save(expected)
+
+	err := save(expected)
 	if err != nil {
 		panic(err)
 	}
@@ -24,19 +31,21 @@ func TestSave(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	res, err := client.Get().Index("laravel_collection").Type("posts").Id(id).Do(context.Background())
+	res, err := client.Get().Index("laravel_collections").Type(expected.Type).Id(expected.Id).Do(context.Background())
 	if err != nil {
 		panic(err)
 	}
 	t.Logf("%+v", res)
 	t.Logf("%s", string(*res.Source)) //type *json.RawMessage
-	var profileModel model.Profile
-	err = json.Unmarshal(*res.Source, &profileModel)
-	if err != nil {
-		panic(err)
-	}
+	var profileModel engine.Item
+	json.Unmarshal(*res.Source, &profileModel)
+	//got {map[Title:Laravel v5.7.22 Released &nbsp; Domain:github.com Topic:News]};
+	//expected {{Laravel v5.7.22 Released &nbsp; github.com News}}
+	profile, _ := model.MapToProfile(
+		profileModel.Payload)
+	profileModel.Payload = profile
+
 	if profileModel != expected {
 		t.Errorf("got %v; expected %v", profileModel, expected)
 	}
-
 }
