@@ -14,6 +14,7 @@ func RPCServe(host string, service interface{}) error {
 	if err != nil {
 		return err
 	}
+	log.Printf("listening on %s", host)
 	for {
 		conn, err := lis.Accept()
 		if err != nil {
