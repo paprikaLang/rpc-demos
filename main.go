@@ -16,6 +16,7 @@ func main() {
 		Scheduler: &scheduler.GoroutineScheduler{},
 		Workers:   10,
 		ItemSaver: itemsaver,
+		WorkerProcessor: engine.Worker,
 	}
 	// e := engine.SimpleEngine{}
 	e.Run(engine.Request{

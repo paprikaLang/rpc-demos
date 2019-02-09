@@ -14,7 +14,7 @@ var itemRe = regexp.MustCompile(
 `)
 
 // ParseItem with parse
-func parseItem(contents []byte, topic string) []engine.ParseResult {
+func ParseItem(contents []byte, topic string) []engine.ParseResult {
 
 	matches := itemRe.FindAllSubmatch(contents, -1)
 	fmt.Println(len(matches))
@@ -44,7 +44,7 @@ type ItemParser struct {
 }
 
 func (f *ItemParser) Parse(contents []byte) []engine.ParseResult {
-	return parseItem(contents, f.topic)
+	return ParseItem(contents, f.topic)
 }
 
 func (f *ItemParser) Serialize() (name string, args interface{}) {

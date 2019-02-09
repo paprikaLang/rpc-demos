@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	rpcconfig.RPCServe(":9000", worker.WorkerService{})
+	rpcconfig.RPCServe(":2334", worker.WorkerService{})
 }

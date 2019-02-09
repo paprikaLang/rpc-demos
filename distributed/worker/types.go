@@ -63,13 +63,12 @@ func deserializeParser(p SerializedParser) (engine.Parser, error) {
 	switch p.Name {
 	case "ParseTopic":
 		return engine.NewFuncParser(parser.ParseTopic, "ParseTopic"), nil
-	case "ParseItem":
+	case "ItemParser":
 		if topic, ok := p.Args.(string); ok {
 			return parser.NewItemParser(topic), nil
 		} else {
 			return nil, fmt.Errorf("invalid "+"arg: %v", p.Args)
 		}
-
 	case "NilParser":
 		return engine.NilParser{}, nil
 	default:
@@ -77,18 +76,24 @@ func deserializeParser(p SerializedParser) (engine.Parser, error) {
 	}
 
 }
-func DeserializeResult(r ParseResult) engine.ParseResult {
+func DeserializeResult(results []ParseResult) []engine.ParseResult {
 
-	result := engine.ParseResult{
-		Items: r.Items,
-	}
-	for _, req := range r.Requests {
-		engineReq, err := DeserializeRequest(req)
-		if err != nil {
-			log.Printf("err deserialize request: %v", err)
-			continue
+	var array []engine.ParseResult
+	for _, r := range results {
+		result := engine.ParseResult{
+			Items: r.Items,
 		}
-		result.Requests = append(result.Requests, engineReq)
+		fmt.Println(result)
+		for _, req := range r.Requests {
+			engineReq, err := DeserializeRequest(req)
+			if err != nil {
+				log.Printf("err deserialize request: %v", err)
+				continue
+			}
+			result.Requests = append(result.Requests, engineReq)
+		}
+		array = append(array, result)
 	}
-	return result
+
+	return array
 }

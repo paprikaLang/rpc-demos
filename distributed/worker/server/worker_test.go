@@ -19,7 +19,7 @@ func TestWorkerService(t *testing.T) {
 	req := worker.Request{
 		URL: "https://laravelcollections.com/audios",
 		Parser: worker.SerializedParser{
-			Name: "ParseItem",
+			Name: "ItemParser",
 			Args: "Audios",
 		},
 	}
@@ -30,5 +30,4 @@ func TestWorkerService(t *testing.T) {
 	} else {
 		fmt.Println(result)
 	}
-
 }
