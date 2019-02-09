@@ -27,7 +27,7 @@ func TestSave(t *testing.T) {
 		panic(err)
 	}
 	index := "laravel_collections"
-	err = save(client, expected, index)
+	err = Save(client, expected, index)
 	if err != nil {
 		panic(err)
 	}

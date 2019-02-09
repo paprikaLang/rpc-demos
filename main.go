@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	itemsaver, err := persist.ItemSaver("laravel_collections")
+	itemsaver, err := persist.ItemSaver("laravel_collection")
 	if err != nil {
 		panic(err)
 	}
@@ -19,7 +19,7 @@ func main() {
 	}
 	// e := engine.SimpleEngine{}
 	e.Run(engine.Request{
-		Path:       "https://laravelcollections.com",
-		ParserFunc: parser.ParseTopic,
+		Path:   "https://laravelcollections.com",
+		Parser: engine.NewFuncParser(parser.ParseTopic, "ParseTopic"),
 	})
 }
